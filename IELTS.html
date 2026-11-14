@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IELTS Niner Factory – Progress Tracker</title>
+<style>
+:root{--bg:#f6f8fb;--card:#fff;--text:#1b2430;--muted:#667284;--line:#d5dce6;--alt:#f0f3f8;--ac:#1F3A5F;--L:#2E7D6B;--R:#3B6FB6;--W:#B5651D;--S:#7B4B94;--bad:#c0392b;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10151c;--card:#1a212b;--text:#e6ebf2;--muted:#9aa6b6;--line:#2c3643;--alt:#202833;--ac:#8fb1e0;--L:#4fb89f;--R:#6a9be0;--W:#e09a55;--S:#b48ad0;--bad:#ef7b6d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#10151c;--card:#1a212b;--text:#e6ebf2;--muted:#9aa6b6;--line:#2c3643;--alt:#202833;--ac:#8fb1e0;--L:#4fb89f;--R:#6a9be0;--W:#e09a55;--S:#b48ad0;--bad:#ef7b6d;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+main{max-width:1000px;margin:0 auto;padding:14px}
+h1{font-size:20px;margin:0;color:var(--ac)} h2{font-size:15px;margin:0 0 8px;color:var(--ac)}
+.top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.top label{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
+input,select,button{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:6px;padding:5px 8px}
+button{cursor:pointer;background:var(--ac);color:var(--bg);border-color:var(--ac);font-weight:600}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.tabs button{background:var(--card);color:var(--text);border-color:var(--line);font-weight:500}
+.tabs button.on{background:var(--ac);color:var(--bg);border-color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px}
+.wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th,td{border:1px solid var(--line);padding:2px 3px;text-align:center}
+thead th{background:var(--alt)} thead .gL{background:var(--L);color:#fff}.gR{background:var(--R);color:#fff}.gW{background:var(--W);color:#fff}.gS{background:var(--S);color:#fff}
+tbody th{text-align:left;white-space:nowrap;padding:2px 6px;font-weight:500}
+tr.alt{background:var(--alt)}
+td input.n{width:42px;text-align:center;padding:2px;border-color:transparent;background:transparent}
+td input.n:focus{border-color:var(--ac);background:var(--card)} td input.n::placeholder{color:var(--muted);opacity:.7}
+td input[type=checkbox]{width:16px;height:16px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--c);border-radius:8px;padding:8px 10px}
+.stat b{font-size:22px;display:block}.stat span{font-size:12px;color:var(--muted)}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.row input[type=text]{flex:1;min-width:140px}
+.muted{color:var(--muted);font-size:12px} .flag{color:var(--bad);font-weight:700}
+td.l,th.l{text-align:left;padding:4px 6px} .x{background:none;border:none;color:var(--bad);padding:0 4px}
+svg{width:100%;height:auto;display:block} svg text{fill:var(--text);font-size:11px}
+@media print{.tabs,.top label,.row{display:none}}
+</style></head><body><main>
+<div class="top">
+ <h1>IELTS Niner Factory · Progress Tracker</h1>
+ <div style="display:flex;gap:8px;flex-wrap:wrap">
+  <label>Student <input id="name" placeholder="Your name" style="width:150px"></label>
+  <label>Target band <input id="target" type="number" min="4" max="9" step="0.5" value="7" style="width:60px"></label>
+  <label id="stuWrap" hidden>View student <select id="stu"></select></label>
+ </div>
+</div>
+<div class="muted" id="status" style="margin-bottom:8px">Loading…</div>
+<div class="tabs" id="tabs">
+ <button data-t="check" class="on">Checklist</button><button data-t="prog">Progress</button><button data-t="err">Error log</button><button data-t="para">Paraphrasing</button>
+</div>
+
+<section id="check">
+ <div class="card"><div class="wrap"><table>
+ <thead><tr><th rowspan="2">Cambridge IELTS 12–21</th><th colspan="3" class="gL">LISTENING</th><th colspan="3" class="gR">READING</th><th colspan="6" class="gW">WRITING</th><th colspan="6" class="gS">SPEAKING</th></tr>
+ <tr><th>Done</th><th>Raw/40</th><th>Band</th><th>Done</th><th>Raw/40</th><th>Band</th><th>Done</th><th>TA/TR</th><th>CC</th><th>LR</th><th>GRA</th><th>Band</th><th>Done</th><th>FC</th><th>LR</th><th>GRA</th><th>P</th><th>Band</th></tr></thead>
+ <tbody id="tb"></tbody></table></div>
+ <p class="muted">Type a raw score and the band appears in grey automatically (Academic conversion). For Writing and Speaking, enter the four criterion bands and the overall band is averaged and rounded the IELTS way. Type in a Band cell to override. TA/TR = Task Achievement/Response, CC = Coherence &amp; Cohesion, LR = Lexical Resource, GRA = Grammatical Range &amp; Accuracy, FC = Fluency &amp; Coherence, P = Pronunciation.</p></div>
+</section>
+
+<section id="prog" hidden>
+ <div class="cards" id="cards"></div>
+ <div class="card"><h2>Band progress across tests</h2><div id="line"></div><div class="muted">Dashed line = target band. Tests are plotted in book order (C12 → C21).</div></div>
+ <div class="card"><h2>Systematic errors</h2><div id="bars"></div><div class="wrap" id="sys"></div></div>
+</section>
+
+<section id="err" hidden><div class="card">
+ <h2>Log an error</h2>
+ <div class="row"><select id="eS"><option value="L">Listening</option><option value="R">Reading</option><option value="W">Writing</option><option value="S">Speaking</option></select>
+ <select id="eT"></select><select id="eK"></select><input type="text" id="eN" placeholder="Note (e.g. Q14, wrote ‘fee’ not ‘fees’)"><button id="eAdd">Add</button></div>
+ <div class="wrap"><table><thead><tr><th class="l">Test</th><th class="l">Skill</th><th class="l">Error type</th><th class="l">Note</th><th></th></tr></thead><tbody id="eList"></tbody></table></div>
+</div></section>
+
+<section id="para" hidden><div class="card">
+ <h2>Paraphrasing log</h2>
+ <p class="muted">Codes: SYN synonym · WF word form · ST structure (active/passive, clause/phrase) · ANT antonym + negative · GEN general ↔ specific · NUM numbers/quantity · PHR phrase/idiom · ORD reordering</p>
+ <div class="row"><select id="pS"><option>Reading</option><option>Listening</option></select><input type="text" id="pK" placeholder="Test / Q no. (e.g. C15 T2 Q7)" style="max-width:190px">
+ <input type="text" id="pQ" placeholder="Wording in the question"><input type="text" id="pA" placeholder="Paraphrase in passage / recording">
+ <input type="text" id="pT" placeholder="Type (SYN, ST…)" style="max-width:130px"><button id="pAdd">Add</button></div>
+ <div class="wrap"><table><thead><tr><th class="l">Skill</th><th class="l">Test / Q</th><th class="l">Question</th><th class="l">Paraphrase</th><th class="l">Type</th><th></th></tr></thead><tbody id="pList"></tbody></table></div>
+</div></section>
+</main>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const TESTS=[];for(let b=12;b<=21;b++)for(let t=1;t<=4;t++)TESTS.push(b+"-"+t);
+const LB=[[39,9],[37,8.5],[35,8],[32,7.5],[30,7],[26,6.5],[23,6],[18,5.5],[16,5],[13,4.5],[10,4],[8,3.5],[6,3],[4,2.5]];
+const RB=[[39,9],[37,8.5],[35,8],[33,7.5],[30,7],[27,6.5],[23,6],[19,5.5],[15,5],[13,4.5],[10,4],[8,3.5],[6,3],[4,2.5]];
+const SK={L:"Listening",R:"Reading",W:"Writing",S:"Speaking"};
+const ET={R:["T/F/NG confusion","Matching headings","Missed paraphrase","Spelling","Word limit exceeded","Ran out of time","Guessed / skipped"],
+L:["Spelling","Singular / plural","Distractor (answer changed)","Number / date format","Lost track of the audio","Map / diagram labelling","Word limit exceeded"],
+W:["Task response / achievement","Coherence & cohesion","Vocabulary range","Word choice / collocations","Grammar: tenses","Grammar: articles / plurals","Spelling / punctuation","Under word count"],
+S:["Fluency / hesitation","Limited vocabulary","Grammar accuracy","Pronunciation","Short answers (Parts 1 & 3)","Part 2 timing"]};
+const blank=()=>({name:"",target:7,tests:{},errors:[],para:[]});
+let S=blank(),db=null,user=null,docId=null,timer=null;
+const LSK="ielts-niner-tracker";
+
+/* ---------- band logic ---------- */
+const conv=(t,n)=>{if(n===""||n==null||isNaN(n))return null;for(const[m,b]of t)if(n>=m)return b;return 2};
+const num=v=>{const n=parseFloat(v);return isNaN(n)?null:n};
+function autoBand(k,s){const o=(S.tests[k]||{})[s]||{};
+ if(s=="L")return o.r===""||o.r==null?null:conv(LB,+o.r);
+ if(s=="R")return o.r===""||o.r==null?null:conv(RB,+o.r);
+ const v=["c1","c2","c3","c4"].map(f=>num(o[f]));if(v.some(x=>x==null))return null;
+ return Math.round(v.reduce((a,b)=>a+b,0)/4*2)/2}
+function eff(k,s){const o=(S.tests[k]||{})[s]||{};const e=num(o.b);return e!=null?e:autoBand(k,s)}
+
+/* ---------- checklist ---------- */
+function rowHTML(k){const[b,t]=k.split("-"),T=S.tests[k]||{};
+ const c=(s,f)=>`<td><input class="n" inputmode="decimal" data-k="${k}" data-s="${s}" data-f="${f}" value="${esc((T[s]||{})[f])}"></td>`;
+ const d=s=>`<td><input type="checkbox" data-k="${k}" data-s="${s}" data-f="d" ${(T[s]||{}).d?"checked":""}></td>`;
+ return `<tr class="${b%2?"alt":""}"><th>C${b} · Test ${t}</th>${d("L")}${c("L","r")}${c("L","b")}${d("R")}${c("R","r")}${c("R","b")}${d("W")}${["c1","c2","c3","c4","b"].map(f=>c("W",f)).join("")}${d("S")}${["c1","c2","c3","c4","b"].map(f=>c("S",f)).join("")}</tr>`}
+function renderCheck(){$("#tb").innerHTML=TESTS.map(rowHTML).join("");autoPH()}
+function autoPH(){document.querySelectorAll('input[data-f="b"]').forEach(i=>{const a=autoBand(i.dataset.k,i.dataset.s);i.placeholder=a==null?"":a})}
+$("#tb").addEventListener("input",e=>{const i=e.target,{k,s,f}=i.dataset;if(!k)return;
+ const o=((S.tests[k]??={})[s]??={});o[f]=i.type==="checkbox"?i.checked:i.value.trim();save();autoPH()});
+
+/* ---------- progress ---------- */
+function renderProg(){
+ const cards=Object.keys(SK).map(s=>{const pts=TESTS.map((k,i)=>({i,b:eff(k,s)})).filter(p=>p.b!=null);
+  const done=TESTS.filter(k=>((S.tests[k]||{})[s]||{}).d||eff(k,s)!=null).length;
+  const avg=pts.length?(pts.reduce((a,p)=>a+p.b,0)/pts.length).toFixed(1):"–";const last=pts.length?pts[pts.length-1].b.toFixed(1):"–";
+  return `<div class="stat" style="--c:var(--${s})"><span>${SK[s]}</span><b>${last}</b><span>latest · avg ${avg} · ${done}/40 done</span></div>`}).join("");
+ $("#cards").innerHTML=cards;
+ // line chart
+ const W=700,H=270,l=34,r=10,t=12,bt=34,x=i=>l+i*(W-l-r)/39,y=v=>t+(9-v)*(H-t-bt)/6;let g="";
+ for(let v=3;v<=9;v++)g+=`<line x1="${l}" x2="${W-r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${l-6}" y="${y(v)+4}" text-anchor="end">${v}</text>`;
+ for(let b=12;b<=21;b++){const i=(b-12)*4;g+=`<line x1="${x(i)}" x2="${x(i)}" y1="${t}" y2="${H-bt}" stroke="var(--line)" stroke-dasharray="2 3"/><text x="${x(i)+2}" y="${H-bt+14}">C${b}</text>`}
+ const tg=num(S.target);if(tg!=null&&tg>=3&&tg<=9)g+=`<line x1="${l}" x2="${W-r}" y1="${y(tg)}" y2="${y(tg)}" stroke="var(--bad)" stroke-dasharray="6 4" stroke-width="1.5"/><text x="${W-r}" y="${y(tg)-4}" text-anchor="end" style="fill:var(--bad)">target ${tg}</text>`;
+ Object.keys(SK).forEach(s=>{const p=TESTS.map((k,i)=>({i,b:eff(k,s)})).filter(p=>p.b!=null);if(!p.length)return;
+  g+=`<polyline fill="none" stroke="var(--${s})" stroke-width="2" points="${p.map(q=>x(q.i)+","+y(Math.max(3,q.b))).join(" ")}"/>`+p.map(q=>`<circle cx="${x(q.i)}" cy="${y(Math.max(3,q.b))}" r="3.5" fill="var(--${s})"><title>${SK[s]} C${TESTS[q.i].replace("-"," T")}: ${q.b}</title></circle>`).join("")});
+ const lg=Object.keys(SK).map((s,i)=>`<rect x="${l+i*110}" y="${H-12}" width="10" height="10" fill="var(--${s})"/><text x="${l+i*110+14}" y="${H-3}">${SK[s]}</text>`).join("");
+ $("#line").innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Band progress chart">${g}${lg}</svg>`;
+ // systematic errors
+ const m={};S.errors.forEach(e=>{const key=e.s+"|"+e.k;(m[key]??={s:e.s,k:e.k,n:0,t:new Set()});m[key].n++;m[key].t.add(e.t)});
+ const L=Object.values(m).sort((a,b)=>b.n-a.n);
+ if(!L.length){$("#bars").innerHTML='<p class="muted">No errors logged yet. Use the Error log tab to record mistakes and patterns will appear here.</p>';$("#sys").innerHTML="";return}
+ const top=L.slice(0,10),mx=top[0].n,bh=22,BW=700,lw=250;
+ $("#bars").innerHTML=`<svg viewBox="0 0 ${BW} ${top.length*bh+6}">`+top.map((e,i)=>`<text x="${lw-6}" y="${i*bh+15}" text-anchor="end">${esc(SK[e.s])}: ${esc(e.k)}</text><rect x="${lw}" y="${i*bh+3}" width="${(BW-lw-40)*e.n/mx}" height="16" rx="3" fill="var(--${e.s})"/><text x="${lw+(BW-lw-40)*e.n/mx+5}" y="${i*bh+15}">${e.n}</text>`).join("")+"</svg>";
+ $("#sys").innerHTML=`<table><thead><tr><th class="l">Skill</th><th class="l">Error type</th><th>Times</th><th>In how many tests</th><th class="l">Status</th></tr></thead><tbody>`+L.map(e=>`<tr><td class="l">${SK[e.s]}</td><td class="l">${esc(e.k)}</td><td>${e.n}</td><td>${e.t.size}</td><td class="l">${e.t.size>=3?'<span class="flag">Systematic – revise</span>':e.t.size==2?"Watch":"One-off so far"}</td></tr>`).join("")+"</tbody></table><p class=\"muted\">An error counts as systematic once it appears in three or more different tests.</p>"}
+
+/* ---------- error log ---------- */
+function fillTypes(){$("#eT").innerHTML=ET[$("#eS").value].map(x=>`<option>${esc(x)}</option>`).join("")}
+$("#eK").innerHTML=TESTS.map(k=>{const[b,t]=k.split("-");return `<option value="${k}">C${b} T${t}</option>`}).join("");
+$("#eS").onchange=fillTypes;fillTypes();
+$("#eAdd").onclick=()=>{S.errors.push({s:$("#eS").value,k:$("#eT").value,t:$("#eK").value,n:$("#eN").value.trim()});$("#eN").value="";save();renderErr()};
+function renderErr(){$("#eList").innerHTML=S.errors.map((e,i)=>`<tr><td class="l">C${e.t.replace("-"," T")}</td><td class="l">${SK[e.s]}</td><td class="l">${esc(e.k)}</td><td class="l">${esc(e.n)}</td><td><button class="x" data-i="${i}" title="Delete">✕</button></td></tr>`).reverse().join("")}
+$("#eList").onclick=e=>{const i=e.target.dataset.i;if(i!=null){S.errors.splice(+i,1);save();renderErr()}};
+
+/* ---------- paraphrasing ---------- */
+$("#pAdd").onclick=()=>{const q=$("#pQ").value.trim(),a=$("#pA").value.trim();if(!q||!a)return;
+ S.para.push({s:$("#pS").value,k:$("#pK").value.trim(),q,a,t:$("#pT").value.trim().toUpperCase()});["pK","pQ","pA","pT"].forEach(i=>$("#"+i).value="");save();renderPara()};
+function renderPara(){$("#pList").innerHTML=S.para.map((p,i)=>`<tr><td class="l">${p.s}</td><td class="l">${esc(p.k)}</td><td class="l">${esc(p.q)}</td><td class="l">${esc(p.a)}</td><td class="l">${esc(p.t)}</td><td><button class="x" data-i="${i}">✕</button></td></tr>`).reverse().join("")}
+$("#pList").onclick=e=>{const i=e.target.dataset.i;if(i!=null){S.para.splice(+i,1);save();renderPara()}};
+
+/* ---------- tabs, header ---------- */
+$("#tabs").onclick=e=>{const t=e.target.dataset.t;if(!t)return;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b===e.target));
+ ["check","prog","err","para"].forEach(id=>$("#"+id).hidden=id!==t);if(t=="prog")renderProg()};
+$("#name").oninput=e=>{S.name=e.target.value;save()};
+$("#target").oninput=e=>{S.target=e.target.value;save()};
+
+/* ---------- storage ---------- */
+function status(t){$("#status").textContent=t}
+function save(){clearTimeout(timer);timer=setTimeout(async()=>{
+ try{localStorage.setItem(LSK+(docId||""),JSON.stringify(S))}catch(e){}
+ if(db&&docId){try{await db.doc("students/"+docId).set(JSON.parse(JSON.stringify(S)));status("Saved to the class tracker ✓")}catch(e){status("Saved on this device only (could not reach the shared tracker).")}}
+ else status("Saved on this device only.")},700)}
+function show(){$("#name").value=S.name||"";$("#target").value=S.target??7;renderCheck();renderErr();renderPara();if(!$("#prog").hidden)renderProg()}
+function load(d){S=Object.assign(blank(),d||{});show()}
+(async()=>{show();
+ try{if(window.claude){db=await claude.use("db");user=await claude.use("user")}}catch(e){}
+ if(db&&user){try{docId=await user.id()}catch(e){}}
+ let own=null;
+ if(db&&docId){try{const s=await db.doc("students/"+docId).get();if(s.exists)own=s.data()}catch(e){db=null}}
+ if(!own){try{own=JSON.parse(localStorage.getItem(LSK+(docId||""))||"null")}catch(e){}}
+ load(own);status(db&&docId?"Connected – your data is saved to the class tracker.":"Saving on this device only (sign in to the shared page to sync).");
+ if(db&&user&&await user.isOwner()){try{const q=await db.collection("students").get();const o=q.docs.map(d=>`<option value="${d.id}" ${d.id==docId?"selected":""}>${esc((d.data()||{}).name||d.id.slice(0,8))}</option>`);
+  if(o.length){$("#stu").innerHTML=o.join("");$("#stuWrap").hidden=false;$("#stu").onchange=async e=>{const s=await db.doc("students/"+e.target.value).get();docId=e.target.value;load(s.data());status("Viewing a student’s tracker. Edits save to their record.")}}}catch(e){}}
+})();
+</script></body></html>
